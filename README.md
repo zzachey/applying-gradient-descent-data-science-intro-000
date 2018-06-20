@@ -13,13 +13,11 @@ When descending along our cost curve in two dimensions, we used the slope of the
 
 But really it's an analogous approach.  Just like we can calculate the use derivative of a function $f(x)$ to calculate the slope at a given value of $x$ on the graph, and thus our next step.  Here, we calculated the partial derivative with respect to both variables, our slope and y-intercept, to calculate the amount to move next in either direction, and thus to steer us towards our minimum.   
 
-![](./maps-pointer.png)
-
 ### Reviewing our gradient descent formulas
 
 Luckily for us, we already did the hard work of deriving these formulas.  Now we get to see the fruit of our labor.  The following formulas tell us how to update regression variables of $m$ and $b$ to approach a "best fit" line.   
 
-* $ \frac{dJ}{dm}J(m,b) = -2\sum_{i = 1}^n x(y_i - (mx_i + b)) = -2\sum_{i = 1}^n x_i*\epsilon_i$
+* $ \frac{dJ}{dm}J(m,b) = -2\sum_{i = 1}^n x(y_i - (mx_i + b)) = -2\sum_{i = 1}^n x_i*\epsilon_i$ 
 * $ \frac{dJ}{db}J(m,b) = -2\sum_{i = 1}^n(y_i - (mx_i + b)) = -2\sum_{i = 1}^n \epsilon_i $
 
 Now the formulas above tell us to take some dataset, with values of $x$ and $y$, and then given a regression formula with values $m$ and $b$, iterate through our dataset, and use the formulas to calculate an update to $m$ and $b$.  So ultimately, to descend along the cost function, we will use the calculations:
@@ -50,7 +48,7 @@ m_current = 0
 
 #amount to update our variables for our next step
 update_to_b = 0
-update_to_m = 0
+update_to_m = 0 
 
 def error_at(point, b, m):
     return (m*point['x'] + b - point['y'])
@@ -65,15 +63,15 @@ new_m = m_current - update_to_m
 
 In the last two lines of the code above, we calculate our `new_b` and `new_m` values by updating our taking our current values and adding our respective updates.  We define a function called `error_at`, which we can use in the error component of our partial derivatives above.
 
-The code above represents just one update to our regression line, and therefore just one step towards our best fit line.  We'll just repeat the process to take multiple steps.  But first we have to make a couple other changes.
+The code above represents **just one** update to our regression line, and therefore just one step towards our best fit line.  We'll just repeat the process to take multiple steps.  But first we have to make a couple other changes. 
 
-### Tweaking our approach
+### Tweaking our approach 
 
 Ok, the above code is very close to what we want, but we just need to make tweaks to our code before it's perfect.
 
 The first one is obvious if we think about what these formulas are really telling us to do.  Look at the graph below, and think about what it means to change each of our $m$ and $b$ variables by at least the sum of all of the errors, of the $y$ values that our regression line predicts and our actual data.  That would be an enormous change.  To ensure that we drastically updating our regression line with each step, we multiply each of these partial derivatives by a learning rate.  As we have seen before, the learning rate is just a small number, like $.0001$ which controls for how large our updates to the regression line will be.  The learning rate is  represented by the Greek letter eta, $\eta$, or alpha $\alpha$.  We'll use eta, so $\eta = .0001$ means the learning rate is $.0001$.
 
-Multiplying our step size by our learning rate works fine, so long as we multiply both of the partial derivatives by the same amount.  This is because with out gradient,  $ \nabla J(m,b)$, we think of as steering us in the correct direction.  In other words, our derivatives ensure we are make the correct **proportional** changes to $m$ and $b$.  So scaling down these changes to make sure we don't update our regression line too quickly works fine, so long as we keep me moving in the correct direction.  While were at it, we can also get rid of multiplying our partials by 2.  As mentioned, so long as our changes are proportional we're in good shape.
+Multiplying our step size by our learning rate works fine, so long as we multiply both of the partial derivatives by the same amount.  This is because with out gradient,  $ \nabla J(m,b)$, we think of as steering us in the correct direction.  In other words, our derivatives ensure we are make the correct **proportional** changes to $m$ and $b$.  So scaling down these changes to make sure we don't update our regression line too quickly works fine, so long as we keep me moving in the correct direction.  While were at it, we can also get rid of multiplying our partials by 2.  As mentioned, so long as our changes are proportional we're in good shape. 
 
 ![](./regression-scatter.png)
 
@@ -85,12 +83,12 @@ Making these changes, our formula looks like the following:
 ```python
 #amount to update our variables for our next step
 update_to_b = 0
-update_to_m = 0
+update_to_m = 0 
 
 learning_rate = .0001
 n = len(shows)
 for i in range(0, n):
-
+    
     update_to_b += -(1/n)*(error_at(shows[i], b_current, m_current))
     update_to_m += -(1/n)*(error_at(shows[i], b_current, m_current)*shows[i]['x'])
 
@@ -102,7 +100,7 @@ So our code now reflects what we know about our gradient descent process.  Start
 
 ### Seeing our gradient descent formulas in action
 
-As mentioned earlier, the code above represents just one update to our regression line, and therefore just one step towards our best fit line.  To take multiple steps we wrap the process we want to duplicate in a function called `step_gradient` and then can call that function as much as we want.
+As mentioned earlier, the code above represents just one update to our regression line, and therefore just one step towards our best fit line.  To take multiple steps we wrap the process we want to duplicate in a function called `step_gradient` and then can call that function as much as we want. 
 
 
 ```python
@@ -202,7 +200,7 @@ As you can see, our $m$ and $b$ values both update with each step.  Not only tha
 
 ###  Animating these changes
 
-We can use Plotly to see these changes to our regression line visually.  We'll write a method called `to_line` that takes a dictionary of $m$ and $b$ variables and changes it to produce a line object.  We can then see our line changes over time.
+We can use Plotly to see these changes to our regression line visually.  We'll write a method called `to_line` that takes a dictionary of $m$ and $b$ variables and changes it to produce a line object.  We can then see our line changes over time. 
 
 
 ```python
@@ -253,13 +251,13 @@ iplot(figure)
 
 
 
-<div id="1dcfe7c3-bed3-479c-b34d-7c63449218bd" style="height: 525px; width: 100%;" class="plotly-graph-div"></div><script type="text/javascript">require(["plotly"], function(Plotly) { window.PLOTLYENV=window.PLOTLYENV || {};window.PLOTLYENV.BASE_URL="https://plot.ly";
+<div id="7acc9796-4f1d-4b04-b20e-479ddae22c7d" style="height: 525px; width: 100%;" class="plotly-graph-div"></div><script type="text/javascript">require(["plotly"], function(Plotly) { window.PLOTLYENV=window.PLOTLYENV || {};window.PLOTLYENV.BASE_URL="https://plot.ly";
         Plotly.plot(
-            '1dcfe7c3-bed3-479c-b34d-7c63449218bd',
+            '7acc9796-4f1d-4b04-b20e-479ddae22c7d',
             [{"x": [0], "y": [0]}, {"x": [30, 40, 100], "y": [45, 60, 150], "mode": "markers"}],
             {"xaxis": {"range": [0, 110], "autorange": false}, "yaxis": {"range": [0, 160], "autorange": false}, "title": "Regression Line", "updatemenus": [{"type": "buttons", "buttons": [{"label": "Play", "method": "animate", "args": [null]}]}]},
             {"showLink": true, "linkText": "Export to plot.ly"}
-        ).then(function () {return Plotly.addFrames('1dcfe7c3-bed3-479c-b34d-7c63449218bd',[{"data": [{"x": [0, 100], "y": [0.0085, 62.508499999999984]}]}, {"data": [{"x": [0, 100], "y": [0.013457483333333336, 98.96697415]}]}, {"data": [{"x": [0, 100], "y": [0.016348771640555558, 120.23160758664055]}]}, {"data": [{"x": [0, 100], "y": [0.018034938763874835, 132.63433827691753]}]}, {"data": [{"x": [0, 100], "y": [0.01901821141416974, 139.86830869337098]}]}, {"data": [{"x": [0, 100], "y": [0.019591516465717437, 144.08756731113914]}]}, {"data": [{"x": [0, 100], "y": [0.019925705352372706, 146.54847639291464]}]}, {"data": [{"x": [0, 100], "y": [0.020120428242875608, 147.98381709628785]}]}, {"data": [{"x": [0, 100], "y": [0.02023380672219544, 148.82098862041082]}]}, {"data": [{"x": [0, 100], "y": [0.020299740568747532, 149.30927422474454]}]}]);}).then(function(){Plotly.animate('1dcfe7c3-bed3-479c-b34d-7c63449218bd');})
+        ).then(function () {return Plotly.addFrames('7acc9796-4f1d-4b04-b20e-479ddae22c7d',[{"data": [{"x": [0, 100], "y": [0.0085, 62.508499999999984]}]}, {"data": [{"x": [0, 100], "y": [0.013457483333333336, 98.96697415]}]}, {"data": [{"x": [0, 100], "y": [0.016348771640555558, 120.23160758664055]}]}, {"data": [{"x": [0, 100], "y": [0.018034938763874835, 132.63433827691753]}]}, {"data": [{"x": [0, 100], "y": [0.01901821141416974, 139.86830869337098]}]}, {"data": [{"x": [0, 100], "y": [0.019591516465717437, 144.08756731113914]}]}, {"data": [{"x": [0, 100], "y": [0.019925705352372706, 146.54847639291464]}]}, {"data": [{"x": [0, 100], "y": [0.020120428242875608, 147.98381709628785]}]}, {"data": [{"x": [0, 100], "y": [0.02023380672219544, 148.82098862041082]}]}, {"data": [{"x": [0, 100], "y": [0.020299740568747532, 149.30927422474454]}]}]);}).then(function(){Plotly.animate('7acc9796-4f1d-4b04-b20e-479ddae22c7d');})
         });</script>
 
 
@@ -267,9 +265,9 @@ As you can see, our regression line starts off far away from our cost curve.  Bu
 
 ### Summary
 
-In this section, we saw our gradient descent formulas in action.  The core of the gradient descent functions are understanding the two lines:
+In this section, we saw our gradient descent formulas in action.  The core of the gradient descent functions are understanding the two lines: 
 
 $$ \frac{dJ}{dm}J(m,b) = -2\sum_{i = 1}^n x(y_i - (mx_i + b)) = -2\sum_{i = 1}^n x_i*\epsilon_i$$
 $$ \frac{dJ}{db}J(m,b) = -2\sum_{i = 1}^n(y_i - (mx_i + b)) = -2\sum_{i = 1}^n \epsilon_i $$
-
+    
 Which both look to the errors of the current regression line for our dataset to determine how to update the regression line next.  These formulas came from our cost function, $J(m,b) = \sum_{i = 1}^n(y_i - (mx_i + b))^2 $, and using the gradient to find the direction of steepest descent.  Translating this into code, and seeing how the regression line continued to improve in alignment with the data, we saw the effectiveness of this technique in practice.  
